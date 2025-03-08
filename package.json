@@ -9,10 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.8.1",
+    "@ionic/core": "^8.4.3",
+    "@ionic/vue": "^8.4.3",
+    "@ionic/vue-router": "^8.4.3",
+    "axios": "^1.8.2",
     "leaflet": "^1.9.4",
+    "pinia": "^3.0.1",
     "vue": "^3.5.13",
-    "vue-leaflet": "^0.1.0"
+    "vue-leaflet": "^0.1.0",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
