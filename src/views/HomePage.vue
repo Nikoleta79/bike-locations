@@ -2,13 +2,13 @@
     <div>
       <h1>Welcome to the Bike Tracker 🚴‍♀️</h1>
       <p>Track your rides and discover new locations!</p>
+  
+      <nav>
+        <router-link to="/">Home</router-link>
+      </nav>
+  
+      <router-view></router-view>
     </div>
-  </template>
-  <template>
-    <nav>
-      <router-link to="/">Home</router-link>
-    </nav>
-    <router-view></router-view>
   </template>
   
   <style>
@@ -23,4 +23,5 @@
     font-weight: bold;
   }
   </style>
+  
   
