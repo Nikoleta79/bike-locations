@@ -1,43 +1,44 @@
 <template>
-    <div>
-      <button @click="saveLocation">Save My Location</button>
-    </div>
-  </template>
+  <div>
+    <button @click="saveLocation">Save My Location</button>
+  </div>
+
   
-  <script setup>
-  import axios from "axios";
-  
-  const saveLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const locationData = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-  
-        axios.post("http://localhost:8000/saveLocation.php", locationData)
-          .then(response => {
-            console.log(response.data);
-            alert(response.data.message);
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      });
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  };
-  </script>
+
+  <!-- Map container -->
+  <div id="map"></div>
+</template>
 
 <script setup>
-import HelloWorld from './components/HelloWorld.vue';
-import L from "leaflet";
 import { onMounted } from "vue";
+import axios from "axios";
+import L from "leaflet";
+
+const saveLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const locationData = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+
+      axios.post("http://localhost:8000/saveLocation.php", locationData)
+        .then(response => {
+          console.log(response.data);
+          alert(response.data.message);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    });
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
+};
 
 onMounted(() => {
   // Initialize the map with a default view (Amsterdam)
-  const map = L.map("map").setView([52.3676, 4.9041], 13); 
+  const map = L.map("map").setView([52.3676, 4.9041], 13);
 
   // Add OpenStreetMap tiles
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -49,15 +50,15 @@ onMounted(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userLocation = [position.coords.latitude, position.coords.longitude];
-        
+
         // Add marker to user's location
         L.marker(userLocation).addTo(map).bindPopup("You are here!").openPopup();
-        
+
         // Center the map on the user's location
         map.setView(userLocation, 14);
       },
       () => {
-        // If geolocation fails, you can set the map to a default location
+        // If geolocation fails, show an alert
         alert("Could not determine your location.");
       }
     );
@@ -66,22 +67,6 @@ onMounted(() => {
   }
 });
 </script>
-
-<template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-
-  <HelloWorld msg="Vite + Vue" />
-
-  <!-- Map container -->
-  <div id="map"></div>
-</template>
 
 <style scoped>
 .logo {
@@ -104,6 +89,7 @@ onMounted(() => {
   height: 500px;
 }
 </style>
+
 
 
 
