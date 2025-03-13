@@ -1,15 +1,23 @@
 import { createRouter, createWebHistory } from "vue-router";
+import HomePage from "../../components/HomePage.vue"; 
+import Settings from "../../components/Settings.vue";
+import MapPage from "../../components/MapPage.vue";
 
 const routes = [
   {
-    path: "/",
-    redirect: "/home",
+    path: '/', 
+    name: 'HomePage',
+    component: HomePage, // Use the new HomePage component
   },
-  
   {
-    path: "/mappage",
+    path: '/mappage',
     name: "MapPage",
-    component: () => import("../../components/MapPage.vue"),
+    component: MapPage,
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
   },
 ];
 
@@ -19,5 +27,8 @@ const router = createRouter({
 });
 
 export default router;
+
+
+
 
 

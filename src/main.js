@@ -3,19 +3,21 @@ import App from './App.vue';
 import { IonicVue } from '@ionic/vue';
 import router from './assets/router';
 
-// Import Ionic CSS
+
 import '@ionic/vue/css/core.css';
 import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
+import i18n from './i18n';
 
-import { createPinia } from 'pinia'; // Make sure you import Pinia correctly
+import { createPinia } from 'pinia'; 
 
 const app = createApp(App);
-const pinia = createPinia(); // Create a Pinia store
+const pinia = createPinia(); 
 
 app.use(IonicVue);
 app.use(pinia);
-app.use(router); // Use the router once
-app.mount('#app'); // Mount the app to the DOM
+app.use(router); 
+app.use(i18n); 
+app.mount('#app'); 
 
