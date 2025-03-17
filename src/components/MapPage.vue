@@ -1,94 +1,139 @@
 <template>
-  <div>
-    <button @click="saveLocation">Save My Location</button>
+  <div class="map-container">
+    <button class="save-btn" @click="saveLocation">Save My Location</button>
+    <div id="map"></div>
   </div>
-
-  
-
-  <!-- Map container -->
-  <div id="map"></div>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import L from "leaflet";
 
+const map = ref(null);
+
 const saveLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
       const locationData = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
 
-      axios.post("http://localhost:8000/saveLocation.php", locationData)
-        .then(response => {
+      localStorage.setItem("lastLocation", JSON.stringify(locationData));
+
+      axios
+        .post("http://localhost:8000/saveLocation.php", locationData)
+        .then((response) => {
           console.log(response.data);
           alert(response.data.message);
         })
-        .catch(error => {
-          console.error(error);
+        .catch((error) => {
+          console.error("Error saving location:", error);
         });
-    });
-  } else {
-    alert("Geolocation is not supported by your browser.");
-  }
+    },
+    (error) => {
+      console.error("Error getting location:", error.message);
+      alert("Could not retrieve your location. Please try again.");
+    }
+  );
 };
 
 onMounted(() => {
-  // Initialize the map with a default view (Amsterdam)
-  const map = L.map("map").setView([52.3676, 4.9041], 13);
+  map.value = L.map("map", {
+    zoomControl: false, // Removes zoom buttons for a cleaner UI
+  }).setView([52.3676, 4.9041], 13);
 
-  // Add OpenStreetMap tiles
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors",
-  }).addTo(map);
+  }).addTo(map.value);
 
-  // Geolocation logic
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const userLocation = [position.coords.latitude, position.coords.longitude];
+  const lastLocation = localStorage.getItem("lastLocation");
+  if (lastLocation) {
+    const { latitude, longitude } = JSON.parse(lastLocation);
+    const userLocation = [latitude, longitude];
 
-        // Add marker to user's location
-        L.marker(userLocation).addTo(map).bindPopup("You are here!").openPopup();
+    L.marker(userLocation)
+      .addTo(map.value)
+      .bindPopup("Your last saved location")
+      .openPopup();
 
-        // Center the map on the user's location
-        map.setView(userLocation, 14);
-      },
-      () => {
-        // If geolocation fails, show an alert
-        alert("Could not determine your location.");
-      }
-    );
+    map.value.setView(userLocation, 14);
   } else {
-    alert("Geolocation is not supported by your browser.");
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = [position.coords.latitude, position.coords.longitude];
+
+          const customIcon = L.icon({
+            iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+            iconSize: [30, 30],
+          });
+
+          L.marker(userLocation, { icon: customIcon })
+            .addTo(map.value)
+            .bindPopup("You are here!")
+            .openPopup();
+
+          map.value.setView(userLocation, 14);
+        },
+        () => {
+          alert("Could not determine your location.");
+        }
+      );
+    }
   }
 });
 </script>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.map-container {
+  width: 90%;
+  max-width: 400px; /* Makes sure the map does not expand too much */
+  margin: 20px auto;
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #map {
   width: 100%;
-  height: 500px;
+  height: 300px; /* Restricts height so it does not spread */
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  overflow: hidden; /* Prevents overflow issues */
+}
+
+.save-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 0.3s;
+  margin-bottom: 10px;
+}
+
+.save-btn:hover {
+  background-color: #0056b3;
 }
 </style>
+
+
+
+
 
 
 
