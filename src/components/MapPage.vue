@@ -1,6 +1,7 @@
 <template>
   <div class="map-container">
     <button class="save-btn" @click="saveLocation">Save My Location</button>
+    <button class="locate-btn" @click="locateUser">Locate Me</button>
     <div id="map"></div>
   </div>
 </template>
@@ -42,6 +43,27 @@ const saveLocation = () => {
       alert("Could not retrieve your location. Please try again.");
     }
   );
+};
+
+const locateUser = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLocation = [position.coords.latitude, position.coords.longitude];
+
+        map.value.setView(userLocation, 14);
+        L.marker(userLocation)
+          .addTo(map.value)
+          .bindPopup("You are here!")
+          .openPopup();
+      },
+      () => {
+        alert("Could not retrieve your location.");
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
 };
 
 onMounted(() => {
@@ -113,8 +135,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-
-.save-btn {
+button {
   background-color: #007bff;
   color: white;
   padding: 10px 16px;
@@ -127,10 +148,19 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 
-.save-btn:hover {
+button:hover {
   background-color: #0056b3;
 }
+
+.locate-btn {
+  background-color: #28a745;
+}
+
+.locate-btn:hover {
+  background-color: #1e7e34;
+}
 </style>
+
 
 
 
