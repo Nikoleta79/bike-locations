@@ -93,10 +93,10 @@ onMounted(() => {
 
 <style scoped>
 .map-container {
-  width: 90%;
-  max-width: 400px; /* Makes sure the map does not expand too much */
+  width: 100%;
+  max-width: 800px; /* Increase max width */
   margin: 20px auto;
-  padding: 10px;
+  padding: 15px;
   background: white;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -107,11 +107,12 @@ onMounted(() => {
 
 #map {
   width: 100%;
-  height: 300px; /* Restricts height so it does not spread */
+  height: 600px; /* Increase height */
   border-radius: 8px;
   border: 1px solid #ddd;
-  overflow: hidden; /* Prevents overflow issues */
+  overflow: hidden;
 }
+
 
 .save-btn {
   background-color: #007bff;
