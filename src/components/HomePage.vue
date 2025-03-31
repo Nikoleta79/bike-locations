@@ -40,9 +40,9 @@
         <img src="../assets/img/Netherlands.png" alt="biking">
       </main>
   
-      <footer class="footer">
-        <p>{{ $t('madeWithLove') }}</p>
-      </footer>
+      <footer>
+      <p>Made with ❤️ by Nikoleta</p>
+    </footer>
     </div>
   </template>
   
