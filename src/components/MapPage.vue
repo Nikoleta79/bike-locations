@@ -1,17 +1,20 @@
 <template>
   <div class="map-container">
-    <input
-      v-model="searchQuery"
-      type="text"
-      placeholder="Search for a location..."
-      class="search-input"
-    />
-    <button class="search-btn" @click="searchLocation">Search</button>
-
     <button class="save-btn" @click="saveLocation">Save My Location</button>
     <button class="locate-btn" @click="locateUser">Locate Me</button>
     
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" v-model="searchQuery" placeholder="Search for a location" />
+      <button @click="searchLocation">Search</button>
+    </div>
+    
     <div id="map"></div>
+
+    <!-- Distance Info -->
+    <div v-if="distance" class="distance-info">
+      Distance to saved location: <strong>{{ distance.toFixed(2) }} km</strong>
+    </div>
   </div>
 </template>
 
@@ -23,6 +26,8 @@ import L from "leaflet";
 const map = ref(null);
 const searchQuery = ref("");
 const searchResultMarker = ref(null);
+const savedLocation = ref(null);
+const distance = ref(null);
 
 const saveLocation = () => {
   if (!navigator.geolocation) {
@@ -38,9 +43,9 @@ const saveLocation = () => {
       };
 
       localStorage.setItem("lastLocation", JSON.stringify(locationData));
+      savedLocation.value = locationData;
 
-      axios
-        .post("http://localhost:8000/saveLocation.php", locationData)
+      axios.post("http://localhost:8000/saveLocation.php", locationData)
         .then((response) => {
           console.log(response.data);
           alert(response.data.message);
@@ -48,6 +53,8 @@ const saveLocation = () => {
         .catch((error) => {
           console.error("Error saving location:", error);
         });
+
+      updateDistance();
     },
     (error) => {
       console.error("Error getting location:", error.message);
@@ -67,6 +74,8 @@ const locateUser = () => {
           .addTo(map.value)
           .bindPopup("You are here!")
           .openPopup();
+
+        updateDistance();
       },
       () => {
         alert("Could not retrieve your location.");
@@ -83,9 +92,7 @@ const searchLocation = async () => {
     return;
   }
 
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-    searchQuery.value
-  )}`;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery.value)}`;
 
   try {
     const response = await axios.get(url);
@@ -113,6 +120,30 @@ const searchLocation = async () => {
   }
 };
 
+// Calculate the distance between user and saved location
+const updateDistance = () => {
+  if (!navigator.geolocation || !savedLocation.value) {
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition((position) => {
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
+    const savedLat = savedLocation.value.latitude;
+    const savedLon = savedLocation.value.longitude;
+
+    const R = 6371; // Radius of the Earth in km
+    const dLat = (savedLat - userLat) * (Math.PI / 180);
+    const dLon = (savedLon - userLon) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(userLat * (Math.PI / 180)) * Math.cos(savedLat * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    distance.value = R * c; // Distance in km
+  });
+};
+
 onMounted(() => {
   map.value = L.map("map", {
     zoomControl: false,
@@ -124,8 +155,8 @@ onMounted(() => {
 
   const lastLocation = localStorage.getItem("lastLocation");
   if (lastLocation) {
-    const { latitude, longitude } = JSON.parse(lastLocation);
-    const userLocation = [latitude, longitude];
+    savedLocation.value = JSON.parse(lastLocation);
+    const userLocation = [savedLocation.value.latitude, savedLocation.value.longitude];
 
     L.marker(userLocation)
       .addTo(map.value)
@@ -184,23 +215,34 @@ button:hover {
   background-color: #1e7e34;
 }
 
-.search-input {
-  width: 80%;
-  padding: 10px;
+.search-container {
+  display: flex;
+  gap: 10px;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
 }
 
-.search-btn {
-  background-color: #ff9800;
+.search-container input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
 }
 
-.search-btn:hover {
-  background-color: #e68900;
+.search-container button {
+  background-color: #17a2b8;
+}
+
+.search-container button:hover {
+  background-color: #138496;
+}
+
+.distance-info {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
 }
 </style>
+
 
 
 
