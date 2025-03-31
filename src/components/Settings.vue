@@ -32,39 +32,27 @@
 </template>
 
 <script setup>
+
 import { ref, watch, onMounted } from "vue";
 
 // Reactive state
-const notifications = ref(false);
 const theme = ref("light");
-const locationTracking = ref(false);
 
-// Load settings from localStorage
+// Load theme from localStorage when the page is loaded
 onMounted(() => {
-  const savedSettings = JSON.parse(localStorage.getItem("userSettings")) || {};
-  notifications.value = savedSettings.notifications ?? false;
-  theme.value = savedSettings.theme ?? "light";
-  locationTracking.value = savedSettings.locationTracking ?? false;
+  const savedTheme = localStorage.getItem("theme") || "light";
+  theme.value = savedTheme;
+  document.documentElement.setAttribute("data-theme", savedTheme);
 });
 
-// Save settings when updated
+// Save theme to localStorage and apply globally
 const saveSettings = () => {
-  localStorage.setItem(
-    "userSettings",
-    JSON.stringify({
-      notifications: notifications.value,
-      theme: theme.value,
-      locationTracking: locationTracking.value,
-    })
-  );
-  console.log("Settings saved!");
+  localStorage.setItem("theme", theme.value);
+  document.documentElement.setAttribute("data-theme", theme.value);
 };
-
-// Watch for theme changes & apply instantly
-watch(theme, (newTheme) => {
-  document.documentElement.setAttribute("data-theme", newTheme);
-});
 </script>
+
+
 
 <style scoped>
 /* Base Styles */
@@ -128,7 +116,7 @@ watch(theme, (newTheme) => {
   background-color: #45a049;
 }
 
-/* Footer */
+
 .settings-footer {
   text-align: center;
   margin-top: auto;
