@@ -219,7 +219,10 @@ button:hover {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 50px; /* This will round the corners */
 }
+
 
 .search-container input {
   padding: 8px;
