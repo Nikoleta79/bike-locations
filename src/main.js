@@ -10,6 +10,10 @@ import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
 import i18n from './i18n';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import "leaflet-routing-machine";
+
+
 
 
 import { createPinia } from 'pinia'; 
