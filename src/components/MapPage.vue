@@ -154,7 +154,7 @@ onMounted(() => {
 .map {
   width: 100%;
   height: 75vh;
-  border-radius: 12px;
+  border-radius: 15px;
 }
 </style>
 
