@@ -59,7 +59,7 @@ onMounted(() => {
   name: 'HomePage',
   methods: {
     changeLanguage(lang) {
-      this.$i18n.locale = lang; // Change the language
+      this.$i18n.locale = lang; 
       localStorage.setItem('userLanguage', lang); // Save the preference
     },
   },

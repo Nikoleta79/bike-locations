@@ -17,8 +17,11 @@
           <option value="park">Nearby Park</option>
         </select>
       </label>
+      <button class="button">
+     Locate Me
+      </button>
     </div>
-
+    
     <div id="map" class="map"></div>
   </div>
 </template>
@@ -155,6 +158,14 @@ onMounted(() => {
   width: 100%;
   height: 75vh;
   border-radius: 15px;
+}
+
+.button{
+  background-color: green;
+  padding: 15px;
+  border-radius: 30px;
+  align-content: center;
+  margin: auto;
 }
 </style>
 
