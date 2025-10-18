@@ -1,0 +1,11 @@
+html[data-theme="light"] {
+  background: #ffffff;
+  color: #333;
+}
+
+html[data-theme="dark"] {
+  background: #222;
+  color: #fff;
+}
+
+/* Optional: style other components globally */

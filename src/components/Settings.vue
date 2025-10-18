@@ -1,12 +1,10 @@
 <template>
-  <div :class="['settings-container', theme]">
+  <div class="settings-container">
     <header class="settings-header">
       <h1>Settings</h1>
     </header>
 
     <main class="settings-content">
-      
-
       <!-- Theme Selector -->
       <section class="setting-item">
         <label for="theme">Select Theme</label>
@@ -28,31 +26,43 @@
     <footer class="settings-footer">
       <p>Made with ❤️ by Nikoleta</p>
     </footer>
+
+    <!-- Ionic toast -->
+    <ion-toast
+      :is-open="isToastOpen"
+      message="Settings saved ✅"
+      duration="1500"
+      @didDismiss="isToastOpen = false"
+    />
   </div>
 </template>
 
 <script setup>
-
 import { ref, watch, onMounted } from "vue";
+import { IonToast } from "@ionic/vue";
 
-// Reactive state
 const theme = ref("light");
+const locationTracking = ref(false);
+const isToastOpen = ref(false);
 
-// Load theme from localStorage when the page is loaded
+// Load saved theme on mount
 onMounted(() => {
   const savedTheme = localStorage.getItem("theme") || "light";
   theme.value = savedTheme;
   document.documentElement.setAttribute("data-theme", savedTheme);
 });
 
-// Save theme to localStorage and apply globally
+// Apply theme immediately when changed
+watch(theme, (newVal) => {
+  document.documentElement.setAttribute("data-theme", newVal);
+});
+
+// Save settings
 const saveSettings = () => {
   localStorage.setItem("theme", theme.value);
-  document.documentElement.setAttribute("data-theme", theme.value);
+  isToastOpen.value = true;
 };
 </script>
-
-
 
 <style scoped>
 /* Base Styles */
@@ -63,18 +73,6 @@ const saveSettings = () => {
   padding: 20px;
   height: 100vh;
   transition: background-color 0.3s, color 0.3s;
-}
-
-/* Light Theme */
-.settings-container.light {
-  background-color: #ffffff;
-  color: #333;
-}
-
-/* Dark Theme */
-.settings-container.dark {
-  background-color: #222;
-  color: #fff;
 }
 
 /* Header */
@@ -116,7 +114,6 @@ const saveSettings = () => {
   background-color: #45a049;
 }
 
-
 .settings-footer {
   text-align: center;
   margin-top: auto;
@@ -125,4 +122,3 @@ const saveSettings = () => {
 </style>
 
 
-  

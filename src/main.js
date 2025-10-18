@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import { IonicVue } from '@ionic/vue';
 import router from './assets/router';
+import './assets/theme.css'
 
 
 
@@ -20,6 +21,7 @@ import { createPinia } from 'pinia';
 
 const app = createApp(App);
 const pinia = createPinia(); 
+
 
 app.use(IonicVue);
 app.use(pinia);

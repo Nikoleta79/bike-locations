@@ -32,6 +32,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import { getNearestPark } from '../parkUtils';
+
 
 const map = ref(null);
 let routingControl = null;
@@ -91,8 +93,12 @@ const drawRoute = () => {
   if (selectedFrom.value === 'current') fromCoords = userLocation.value;
   if (selectedFrom.value === 'park') fromCoords = parkLocation.value.coords;
 
-  if (selectedTo.value === 'current') toCoords = userLocation.value;
-  if (selectedTo.value === 'park') toCoords = parkLocation.value.coords;
+  if (selectedTo.value === 'current') {
+    toCoords = userLocation.value;
+  } else if (selectedTo.value === 'park') {
+    const nearest = getNearestPark(userLocation.value);
+    toCoords = nearest?.coords;
+  }
 
   if (!fromCoords || !toCoords) return;
 
@@ -111,6 +117,7 @@ const drawRoute = () => {
     routeWhileDragging: false,
   }).addTo(map.value);
 };
+
 
 onMounted(() => {
   initMap();
